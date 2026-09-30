@@ -171,6 +171,15 @@ export const CHANNELS = {
         tvgName: 'SNLA',
         provider: 'mlbtv',
       },
+      44: {
+        checkChannelEnabled: () => checkChannelEnabled('mlbtv', 'DSN'),
+        id: 'DSN',
+        logo: 'https://tmsimg.fancybits.co/assets/s136329_ll_h15_aa.png?w=360&h=270',
+        name: 'Detroit Sports Network',
+        stationId: '136329',
+        tvgName: 'DSN',
+        provider: 'mlbtv',
+      },
       70: {
         checkChannelEnabled: async (): Promise<boolean> =>
           (await db.providers.findOneAsync<IProvider>({name: 'wsn'}))?.enabled,
