@@ -196,7 +196,7 @@ const LINEAR_CHANNELS = [
   {
     enabled: false,
     id: 'DSN',
-    name: 'Detroit Sports Network',
+    name: 'Detroit SportsNet',
     stationId: '136329',
   },
 ];
@@ -451,7 +451,7 @@ const parseDsn = async (events: IDsnEvent[] = []): Promise<void> => {
         linear: true,
         name: event.title,
         network: 'DSN',
-        sport: 'NHL',  // Detroit Tigers games go through MLB TV proper, Detroit Red Wings games are what comes through DSN, despite being served up by MLB TV. This is a bit of a misnomer, but the DSN channel is used for both.
+        sport: 'NHL', // Detroit Tigers games go through MLB TV proper, Detroit Red Wings games are what comes through DSN, despite being served up by MLB TV. This is a bit of a misnomer, but the DSN channel is used for both.
         start: start.valueOf(),
       });
     }
@@ -1212,6 +1212,7 @@ class MLBHandler {
       await this.checkMlbNetworkAccess();
       await this.checkSnyAccess();
       await this.checkSnlaAccess();
+      await this.checkDsnAccess();
       await this.getOktaToken();
 
       return true;
