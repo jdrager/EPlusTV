@@ -327,7 +327,7 @@ export class PlaylistHandler {
 
   public cacheChunklist(chunklistId: string): Promise<string> {
     if (this.segmentDuration) {
-      return promiseCache.getPromise(chunklistId, this.proxyChunklist(chunklistId), this.segmentDuration * 1000);
+      return promiseCache.getPromise(chunklistId, () => this.proxyChunklist(chunklistId), this.segmentDuration * 1000);
     }
 
     return this.proxyChunklist(chunklistId);
