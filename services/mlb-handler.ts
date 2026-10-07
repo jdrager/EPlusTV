@@ -12,7 +12,7 @@ import {ClassTypeWithoutMethods, IEntry, IProvider, TChannelPlaybackInfo} from '
 import {db} from './database';
 import {debug} from './debug';
 import {usesLinear} from './misc-db-service';
-import {normalTimeRange} from './shared-helpers';
+import {combineImages, normalTimeRange} from './shared-helpers';
 
 interface IGameContent {
   media: {
@@ -1053,20 +1053,35 @@ class MLBHandler {
 
       const games = (data.games ?? []).filter(game => game.tvBroadcasts?.some((b: {network: string}) => b.network === 'DSN'));
 
-      return games.map((game: any) => {
-        const puckDrop = moment(game.startTimeUTC).startOf('minute');
-        const start = moment(puckDrop).subtract(30, 'minutes');
-        const end = moment(puckDrop).add(210, 'minutes');
+      const [windowStart, windowEnd] = normalTimeRange();
 
-        const title = `${game.awayTeam.placeName.default} ${game.awayTeam.commonName.default} @ ${game.homeTeam.placeName.default} ${game.homeTeam.commonName.default}`;
+      return Promise.all(
+        games.map(async (game: any) => {
+          const puckDrop = moment(game.startTimeUTC).startOf('minute');
+          const start = moment(puckDrop).subtract(30, 'minutes');
+          const end = moment(puckDrop).add(210, 'minutes');
 
-        return {
-          startTime: start.valueOf(),
-          endTime: end.valueOf(),
-          title,
-          thumbnail: 'https://tmsimg.fancybits.co/assets/s136329_ll_h15_aa.png?w=360&h=270',
-        } as IDsnEvent;
-      });
+          const title = `${game.awayTeam.placeName.default} ${game.awayTeam.commonName.default} @ ${game.homeTeam.placeName.default} ${game.homeTeam.commonName.default}`;
+
+          // Only games inside the schedule window become entries, so only build their images
+          let thumbnail = 'https://zpmc.tmsimg.com/h3/NowShowing/136329/GNLZZGG003JVL28.png?w=400';
+
+          if (end.isAfter(windowStart) && start.isBefore(windowEnd)) {
+            try {
+              thumbnail = await combineImages(game.awayTeam.logo, game.homeTeam.logo, 150);
+            } catch (e) {
+              console.log(`Could not build DSN thumbnail for ${title}`);
+            }
+          }
+
+          return {
+            startTime: start.valueOf(),
+            endTime: end.valueOf(),
+            title,
+            thumbnail,
+          } as IDsnEvent;
+        }),
+      );
     } catch (e) {
       console.error(e);
       console.log('Could not get DSN schedule');

@@ -174,8 +174,8 @@ export const CHANNELS = {
       44: {
         checkChannelEnabled: () => checkChannelEnabled('mlbtv', 'DSN'),
         id: 'DSN',
-        logo: 'https://tmsimg.fancybits.co/assets/s136329_ll_h15_aa.png?w=360&h=270',
-        name: 'Detroit Sports Network',
+        logo: 'https://zpmc.tmsimg.com/h3/NowShowing/136329/GNLZZGG003JVL28.png?w=400',
+        name: 'Detroit SportsNet',
         stationId: '136329',
         tvgName: 'DSN',
         provider: 'mlbtv',
